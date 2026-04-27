@@ -6,7 +6,6 @@ export interface DeliveryMeta {
   id: DeliveryId
   creature: CreatureType
   itemLinks?: string[]
-  email?: string
 }
 
 export const deliveries: Record<DeliveryId, DeliveryMeta> = {
@@ -23,7 +22,6 @@ export const deliveries: Record<DeliveryId, DeliveryMeta> = {
   },
   contact: {
     id: 'contact',
-    email: 'hello@example.com',
     creature: 'turtle',
   },
 }

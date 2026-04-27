@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { useStore, PHASES } from '../../store.ts'
 import { deliveries } from '../../data/deliveries.ts'
+import { socialLinks } from '../../lib/socialLinks.ts'
 
 interface TranslatedItem {
   name: string
@@ -67,13 +68,24 @@ export default function DeliveryPanel() {
             </ul>
           )}
 
-          {meta.email && (
-            <a
-              href={`mailto:${meta.email}`}
-              className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white text-slate-900 font-medium text-sm hover:bg-white/90 transition"
-            >
-              {meta.email}
-            </a>
+          {activeDelivery === 'contact' && (
+            <ul className="mt-2 flex flex-col gap-2">
+              {socialLinks.map((link) => (
+                <li key={link.labelKey}>
+                  <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-white/20 bg-white/5 hover:bg-white/10 text-white text-sm transition"
+                  >
+                    <span className="w-7 h-7 rounded-full flex items-center justify-center bg-white/10 text-white/80 text-xs font-medium">
+                      {link.glyph}
+                    </span>
+                    {t(link.labelKey)}
+                  </a>
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}
