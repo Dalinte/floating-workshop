@@ -1,0 +1,48 @@
+{
+  "app": {
+    "loading": "Loading workshop…"
+  },
+  "header": {
+    "title": "Floating Workshop",
+    "tagline": "Crafting things, one commit at a time."
+  },
+  "intro": {
+    "skip": "Skip intro →"
+  },
+  "delivery": {
+    "close": "Close"
+  },
+  "social": {
+    "github": "GitHub",
+    "linkedin": "LinkedIn",
+    "email": "Email"
+  },
+  "deliveries": {
+    "about": {
+      "title": "About Me",
+      "body": "Independent developer crafting interactive web experiences. I love the spot where engineering meets play — shaders, small simulations, tools that feel like toys. Currently building things from a floating workshop in the sky."
+    },
+    "projects": {
+      "title": "Projects",
+      "body": "A few things I have shipped recently.",
+      "items": [
+        {
+          "name": "Project Alpha",
+          "desc": "A real-time collaborative whiteboard with WebRTC and CRDTs."
+        },
+        {
+          "name": "Project Beta",
+          "desc": "Generative ambient music sequencer running entirely in the browser."
+        },
+        {
+          "name": "Project Gamma",
+          "desc": "Self-hosted analytics dashboard with privacy-first event capture."
+        }
+      ]
+    },
+    "contact": {
+      "title": "Contact",
+      "body": "The fastest way to reach me is email. I usually respond within a day or two — open to freelance, collaborations, and interesting conversations."
+    }
+  }
+}
