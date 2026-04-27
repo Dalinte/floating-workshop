@@ -6,6 +6,7 @@ import Navigation from './components/UI/Navigation.tsx'
 import DeliveryPanel from './components/UI/DeliveryPanel.tsx'
 import SocialDock from './components/UI/SocialDock.tsx'
 import SkipIntro from './components/UI/SkipIntro.tsx'
+import CleanupButton from './components/UI/CleanupButton.tsx'
 
 function Loader() {
   const { t } = useTranslation()
@@ -27,6 +28,7 @@ export default function App() {
       <Header />
       <SkipIntro />
       <Navigation />
+      <CleanupButton />
       <DeliveryPanel />
       <SocialDock />
     </div>

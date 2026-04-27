@@ -1,11 +1,13 @@
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import * as THREE from 'three'
 import { useWander } from '../../lib/useWander.ts'
+import { useCleanupSlurp } from '../../lib/useCleanupSlurp.ts'
 import { CREATURE_BASE_Y, CREATURE_DROP_X, CREATURE_DROP_Z } from '../../lib/creatureTracker.ts'
 
 interface CreatureProps {
   spawnProgress: number
   wanderEnabled: boolean
+  cleanupProgress: number
 }
 
 const BASE_SCALE = 0.55
@@ -13,15 +15,25 @@ const COAT = '#d97734'
 const BELLY = '#fde9c8'
 const TIP = '#1f1715'
 
-export default function Fox({ spawnProgress, wanderEnabled }: CreatureProps) {
-  const root = useRef<THREE.Group>(null)
-  useWander(root, { enabled: wanderEnabled, speed: 1.0, radius: 2.2, hopHeight: 0.02, hopFrequency: 9 })
+export default function Fox({ spawnProgress, wanderEnabled, cleanupProgress }: CreatureProps) {
+  const root = useRef<THREE.Group | null>(null)
 
-  const s = Math.max(0, Math.min(1, spawnProgress)) * BASE_SCALE
-  if (s <= 0.001) return null
+  const setRoot = useCallback((node: THREE.Group | null) => {
+    root.current = node
+    if (node) {
+      node.position.set(CREATURE_DROP_X, CREATURE_BASE_Y, CREATURE_DROP_Z)
+    }
+  }, [])
+
+  useWander(root, { enabled: wanderEnabled, speed: 1.0, radius: 2.2, hopHeight: 0.02, hopFrequency: 9 })
+  useCleanupSlurp(root, cleanupProgress)
+
+  const spawn = Math.max(0, Math.min(1, spawnProgress))
+  const cleanup = Math.max(0, Math.min(1, cleanupProgress))
+  const s = spawn * (1 - cleanup) * BASE_SCALE
 
   return (
-    <group ref={root} position={[CREATURE_DROP_X, CREATURE_BASE_Y, CREATURE_DROP_Z]} scale={s}>
+    <group ref={setRoot} scale={s}>
       {/* Body — elongated capsule along Z */}
       <mesh castShadow position={[0, 0.18, 0]} rotation={[Math.PI / 2, 0, 0]}>
         <capsuleGeometry args={[0.13, 0.28, 6, 12]} />

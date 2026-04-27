@@ -83,11 +83,11 @@ export default function Sky() {
         />
       </mesh>
       <fog attach="fog" args={['#a35a8a', 25, 90]} />
-      <Cloud position={[-12, 6, -10]} scale={1.6} speed={0.05} />
-      <Cloud position={[14, 3, -14]} scale={2.0} speed={0.04} />
-      <Cloud position={[-6, 9, -22]} scale={2.4} speed={0.03} />
-      <Cloud position={[10, 8, 10]} scale={1.4} speed={0.06} />
-      <Cloud position={[-18, 4, 6]} scale={1.8} speed={0.045} />
+      <Cloud position={[-12, 7, -10]} scale={1.6} speed={0.05} />
+      <Cloud position={[14, 4, -14]} scale={2.0} speed={0.04} />
+      <Cloud position={[-6, 10, -22]} scale={2.4} speed={0.03} />
+      <Cloud position={[10, 9, 10]} scale={1.4} speed={0.06} />
+      <Cloud position={[-18, 8, 6]} scale={1.8} speed={0.045} />
     </group>
   )
 }

@@ -1,11 +1,13 @@
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import * as THREE from 'three'
 import { useWander } from '../../lib/useWander.ts'
+import { useCleanupSlurp } from '../../lib/useCleanupSlurp.ts'
 import { CREATURE_BASE_Y, CREATURE_DROP_X, CREATURE_DROP_Z } from '../../lib/creatureTracker.ts'
 
 interface CreatureProps {
   spawnProgress: number
   wanderEnabled: boolean
+  cleanupProgress: number
 }
 
 const BASE_SCALE = 0.6
@@ -14,16 +16,26 @@ const SHELL_DARK = '#3d5a26'
 const SKIN = '#7fa450'
 const EYE = '#1c1a18'
 
-export default function Turtle({ spawnProgress, wanderEnabled }: CreatureProps) {
-  const root = useRef<THREE.Group>(null)
+export default function Turtle({ spawnProgress, wanderEnabled, cleanupProgress }: CreatureProps) {
+  const root = useRef<THREE.Group | null>(null)
+
+  const setRoot = useCallback((node: THREE.Group | null) => {
+    root.current = node
+    if (node) {
+      node.position.set(CREATURE_DROP_X, CREATURE_BASE_Y, CREATURE_DROP_Z)
+    }
+  }, [])
+
   // Slow and chill — no hop.
   useWander(root, { enabled: wanderEnabled, speed: 0.35, radius: 1.8, hopHeight: 0 })
+  useCleanupSlurp(root, cleanupProgress)
 
-  const s = Math.max(0, Math.min(1, spawnProgress)) * BASE_SCALE
-  if (s <= 0.001) return null
+  const spawn = Math.max(0, Math.min(1, spawnProgress))
+  const cleanup = Math.max(0, Math.min(1, cleanupProgress))
+  const s = spawn * (1 - cleanup) * BASE_SCALE
 
   return (
-    <group ref={root} position={[CREATURE_DROP_X, CREATURE_BASE_Y, CREATURE_DROP_Z]} scale={s}>
+    <group ref={setRoot} scale={s}>
       {/* Lower body — flat cylinder */}
       <mesh castShadow position={[0, 0.07, 0]}>
         <cylinderGeometry args={[0.21, 0.23, 0.08, 18]} />

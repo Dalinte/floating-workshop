@@ -31,10 +31,10 @@ export default function CameraController() {
   const characterSpawn = useStore((s) => s.characterSpawn)
 
   const isDeliveryView =
-    phase === PHASES.DELIVERY_ARRIVING ||
-    phase === PHASES.DELIVERY_DROPPING ||
-    phase === PHASES.DELIVERY_ACTIVE ||
-    phase === PHASES.DELIVERY_LEAVING
+    phase === PHASES.DELIVERY_ARRIVING || phase === PHASES.DELIVERY_DROPPING
+
+  const isCleanupView =
+    phase === PHASES.CLEANUP_ARRIVING || phase === PHASES.CLEANUP_DROPPING
 
   // Unlock as soon as the character is fully spawned — UFO can keep flying
   // off in the background while the user is free to orbit.
@@ -42,11 +42,11 @@ export default function CameraController() {
     phase === PHASES.INTRO_ARRIVING ||
     (phase === PHASES.INTRO_DROPPING && characterSpawn < 0.99)
 
-  const isCinematic = isIntroLocked || isDeliveryView
+  const isCinematic = isIntroLocked || isDeliveryView || isCleanupView
 
   // Slow ambient orbit kicks in once the programmer has fully arrived,
-  // and only outside of any delivery flow.
-  const wantsAutoRotate = characterSpawn >= 0.99 && !isDeliveryView
+  // and only when the UFO isn't actively performing a delivery or cleanup.
+  const wantsAutoRotate = characterSpawn >= 0.99 && !isDeliveryView && !isCleanupView
 
   useEffect(() => {
     if (!controlsRef.current) return

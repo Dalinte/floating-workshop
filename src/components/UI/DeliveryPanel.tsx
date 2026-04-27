@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useStore, PHASES } from '../../store.ts'
-import { deliveries } from '../../data/deliveries.ts'
+import { useStore } from '../../store.ts'
 import { socialLinks } from '../../lib/socialLinks.ts'
 
 interface TranslatedItem {
@@ -10,15 +9,12 @@ interface TranslatedItem {
 
 export default function DeliveryPanel() {
   const { t } = useTranslation()
-  const phase = useStore((s) => s.phase)
-  const activeDelivery = useStore((s) => s.activeDelivery)
-  const closeDelivery = useStore((s) => s.closeDelivery)
-
-  const open = phase === PHASES.DELIVERY_ACTIVE
-  const meta = activeDelivery ? deliveries[activeDelivery] : null
+  const open = useStore((s) => s.panelOpen)
+  const panelDelivery = useStore((s) => s.panelDelivery)
+  const closePanel = useStore((s) => s.closePanel)
 
   const items =
-    activeDelivery === 'projects'
+    panelDelivery === 'projects'
       ? (t('deliveries.projects.items', { returnObjects: true }) as TranslatedItem[])
       : null
 
@@ -32,14 +28,14 @@ export default function DeliveryPanel() {
         open ? 'translate-x-0 opacity-100' : 'translate-x-[120%] opacity-0',
       ].join(' ')}
     >
-      {meta && activeDelivery && (
+      {panelDelivery && (
         <div className="p-6 text-white">
           <div className="flex items-start justify-between gap-4 mb-4">
             <h2 className="text-2xl font-semibold tracking-tight">
-              {t(`deliveries.${activeDelivery}.title`)}
+              {t(`deliveries.${panelDelivery}.title`)}
             </h2>
             <button
-              onClick={closeDelivery}
+              onClick={closePanel}
               aria-label={t('delivery.close')}
               className="w-8 h-8 rounded-full border border-white/20 text-white/80 hover:bg-white/10 transition flex items-center justify-center text-lg leading-none"
             >
@@ -48,7 +44,7 @@ export default function DeliveryPanel() {
           </div>
 
           <p className="text-white/80 text-sm leading-relaxed mb-4">
-            {t(`deliveries.${activeDelivery}.body`)}
+            {t(`deliveries.${panelDelivery}.body`)}
           </p>
 
           {items && (
@@ -68,7 +64,7 @@ export default function DeliveryPanel() {
             </ul>
           )}
 
-          {activeDelivery === 'contact' && (
+          {panelDelivery === 'contact' && (
             <ul className="mt-2 flex flex-col gap-2">
               {socialLinks.map((link) => (
                 <li key={link.labelKey}>

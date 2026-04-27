@@ -12,6 +12,9 @@
   "delivery": {
     "close": "Close"
   },
+  "cleanup": {
+    "button": "Take them away"
+  },
   "social": {
     "github": "GitHub",
     "linkedin": "LinkedIn",

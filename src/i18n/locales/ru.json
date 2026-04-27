@@ -12,6 +12,9 @@
   "delivery": {
     "close": "Закрыть"
   },
+  "cleanup": {
+    "button": "Убрать всех зверушек"
+  },
   "social": {
     "github": "GitHub",
     "linkedin": "LinkedIn",

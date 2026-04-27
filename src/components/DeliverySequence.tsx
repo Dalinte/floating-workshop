@@ -2,11 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useStore, PHASES } from '../store.ts'
 import UFO from './UFO.tsx'
 import Beam from './Beam.tsx'
-import {
-  creatureWorldPos,
-  CREATURE_DROP_X,
-  CREATURE_DROP_Z,
-} from '../lib/creatureTracker.ts'
+import { CREATURE_DROP_X, CREATURE_DROP_Z } from '../lib/creatureTracker.ts'
 
 type Vec3 = [number, number, number]
 
@@ -62,32 +58,6 @@ function delay(ms: number, abort?: AbortRef): Promise<void> {
   })
 }
 
-// Wait until either the UFO arrival handler fires OR abort is set.
-function awaitArrival(
-  handlerRef: React.MutableRefObject<(() => void) | null>,
-  abort: AbortRef,
-): Promise<void> {
-  return new Promise((resolve) => {
-    let done = false
-    const finish = () => {
-      if (done) return
-      done = true
-      handlerRef.current = null
-      resolve()
-    }
-    handlerRef.current = finish
-    const tick = () => {
-      if (done) return
-      if (abort.current) {
-        finish()
-        return
-      }
-      requestAnimationFrame(tick)
-    }
-    requestAnimationFrame(tick)
-  })
-}
-
 export default function DeliverySequence() {
   const phase = useStore((s) => s.phase)
   const introCompleted = useStore((s) => s.introCompleted)
@@ -98,7 +68,10 @@ export default function DeliverySequence() {
   const setCharacterSpawn = useStore((s) => s.setCharacterSpawn)
   const setBeamIntensity = useStore((s) => s.setBeamIntensity)
   const setCreatureSpawn = useStore((s) => s.setCreatureSpawn)
-  const setActiveDelivery = useStore((s) => s.setActiveDelivery)
+  const setCleanupProgress = useStore((s) => s.setCleanupProgress)
+  const commitSpawningCreature = useStore((s) => s.commitSpawningCreature)
+  const clearSpawnedCreatures = useStore((s) => s.clearSpawnedCreatures)
+  const setPanel = useStore((s) => s.setPanel)
   const finishIntro = useStore((s) => s.finishIntro)
 
   const [ufoTarget, setUfoTarget] = useState<Vec3>(UFO_OFFSCREEN)
@@ -167,7 +140,7 @@ export default function DeliverySequence() {
     setUfoTarget(UFO_OFFSCREEN)
   }, [phase])
 
-  // ─── Delivery flow ─────────────────────────────────────────────────────
+  // ─── Delivery flow (creature stays on the island after drop) ───────────
 
   useEffect(() => {
     if (phase !== PHASES.DELIVERY_ARRIVING) return
@@ -186,7 +159,7 @@ export default function DeliverySequence() {
     if (phase !== PHASES.DELIVERY_DROPPING) return
     const abort: AbortRef = { current: false }
     ;(async () => {
-      // Beam in, creature scales up under the beam, beam out, UFO leaves.
+      // Beam in, creature scales up under the beam, beam out.
       await tween(0, 1, 500, setBeamIntensity, abort)
       if (abort.current) return
       await delay(120, abort)
@@ -194,45 +167,63 @@ export default function DeliverySequence() {
       await delay(180, abort)
       await tween(1, 0, 500, setBeamIntensity, abort)
       if (abort.current) return
-      // Send UFO off-screen while the panel is open so it doesn't dominate the scene.
-      setUfoTarget(UFO_OFFSCREEN)
-      setPhase(PHASES.DELIVERY_ACTIVE)
-    })()
-    return () => {
-      abort.current = true
-    }
-  }, [phase, setBeamIntensity, setCreatureSpawn, setPhase])
 
-  useEffect(() => {
-    if (phase !== PHASES.DELIVERY_LEAVING) return
-    const abort: AbortRef = { current: false }
-    ;(async () => {
-      // 1) UFO flies back to wherever the creature is right now.
-      const recall: Vec3 = [creatureWorldPos.x, UFO_HOVER_Y, creatureWorldPos.z]
-      setUfoTarget(recall)
-      await awaitArrival(arrivedHandlerRef, abort)
-      if (abort.current) return
-
-      // 2) Beam on, creature fades, beam off.
-      await tween(0, 1, 500, setBeamIntensity, abort)
-      if (abort.current) return
-      await delay(150, abort)
-      await tween(1, 0, 700, setCreatureSpawn, abort)
-      await delay(180, abort)
-      await tween(1, 0, 500, setBeamIntensity, abort)
-      if (abort.current) return
-
-      // 3) Hand control back immediately — UFO continues flying offscreen
-      //    in the background while the user is free to click again.
-      setActiveDelivery(null)
+      // Move the in-flight creature to the permanent list, open the panel,
+      // hand control back. UFO drifts offscreen on its own.
+      commitSpawningCreature()
+      const id = useStore.getState().activeDelivery
+      if (id) setPanel(true, id)
       setUfoTarget(UFO_OFFSCREEN)
       setPhase(PHASES.INTERACTIVE)
     })()
     return () => {
       abort.current = true
+    }
+  }, [phase, setBeamIntensity, setCreatureSpawn, commitSpawningCreature, setPanel, setPhase])
+
+  // ─── Cleanup flow (UFO sucks every creature up at once) ────────────────
+
+  useEffect(() => {
+    if (phase !== PHASES.CLEANUP_ARRIVING) return
+    setUfoTarget(UFO_OVER_ISLAND)
+    arrivedHandlerRef.current = () => {
+      if (useStore.getState().phase === PHASES.CLEANUP_ARRIVING) {
+        setPhase(PHASES.CLEANUP_DROPPING)
+      }
+    }
+    return () => {
       arrivedHandlerRef.current = null
     }
-  }, [phase, setBeamIntensity, setCreatureSpawn, setActiveDelivery, setPhase])
+  }, [phase, setPhase])
+
+  useEffect(() => {
+    if (phase !== PHASES.CLEANUP_DROPPING) return
+    const abort: AbortRef = { current: false }
+    ;(async () => {
+      await tween(0, 1, 500, setBeamIntensity, abort)
+      if (abort.current) return
+      await delay(120, abort)
+      // Each creature reads cleanupProgress and slurps to UFO + scales to 0.
+      await tween(0, 1, 800, setCleanupProgress, abort)
+      await delay(120, abort)
+      await tween(1, 0, 500, setBeamIntensity, abort)
+      if (abort.current) return
+
+      clearSpawnedCreatures()
+      setCleanupProgress(0)
+      setUfoTarget(UFO_OFFSCREEN)
+      setPhase(PHASES.INTERACTIVE)
+    })()
+    return () => {
+      abort.current = true
+    }
+  }, [
+    phase,
+    setBeamIntensity,
+    setCleanupProgress,
+    clearSpawnedCreatures,
+    setPhase,
+  ])
 
   const handleArrived = () => {
     arrivedHandlerRef.current && arrivedHandlerRef.current()

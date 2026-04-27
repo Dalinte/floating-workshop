@@ -5,25 +5,29 @@ import { deliveryList } from '../../data/deliveries.ts'
 export default function Navigation() {
   const { t } = useTranslation()
   const phase = useStore((s) => s.phase)
-  const activeDelivery = useStore((s) => s.activeDelivery)
+  const panelOpen = useStore((s) => s.panelOpen)
+  const panelDelivery = useStore((s) => s.panelDelivery)
   const characterSpawn = useStore((s) => s.characterSpawn)
   const requestDelivery = useStore((s) => s.requestDelivery)
 
-  const inDelivery =
+  // Buttons are disabled only while the UFO is busy (delivering or cleaning up).
+  // The post-spawn intro tail (UFO still flying off, camera dollying in) does
+  // NOT lock them — `requestDelivery` accepts clicks once the character is fully
+  // spawned, regardless of which intro phase the UFO is still finishing.
+  const isUfoBusy =
     phase === PHASES.DELIVERY_ARRIVING ||
     phase === PHASES.DELIVERY_DROPPING ||
-    phase === PHASES.DELIVERY_ACTIVE ||
-    phase === PHASES.DELIVERY_LEAVING
-
-  const enabled = !inDelivery && characterSpawn >= 0.99
+    phase === PHASES.CLEANUP_ARRIVING ||
+    phase === PHASES.CLEANUP_DROPPING
+  const enabled = !isUfoBusy && characterSpawn >= 0.99
 
   return (
     <nav className="fixed bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-10">
       <div className="glass rounded-full px-1.5 py-1.5 sm:px-2 sm:py-2 flex gap-1 sm:gap-2 shadow-lg">
         {deliveryList.map((d) => {
-          const isActive = activeDelivery === d.id
+          const isActive = panelOpen && panelDelivery === d.id
           const classes = [
-            'whitespace-nowrap px-3 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-base font-medium transition-all border',
+            'whitespace-nowrap px-3 py-1.5 sm:px-5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all border',
             isActive
               ? 'bg-white text-slate-900 border-white shadow'
               : 'border-white/20 text-white/90 hover:bg-white/10',
