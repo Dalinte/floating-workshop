@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  background: #1a1530;
+  overflow: hidden;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  color: #f5f5f5;
+}
+
+canvas {
+  display: block;
+  outline: none;
+  touch-action: none;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.glass-strong {
+  background: rgba(20, 18, 40, 0.55);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.panel-enter {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.panel-exit {
+  transform: translateX(110%);
+  opacity: 0;
+}
