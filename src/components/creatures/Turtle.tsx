@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import * as THREE from 'three'
 import { useWander } from '../../lib/useWander.ts'
+import { CREATURE_BASE_Y, CREATURE_DROP_X, CREATURE_DROP_Z } from '../../lib/creatureTracker.ts'
 
 interface CreatureProps {
   spawnProgress: number
@@ -22,7 +23,7 @@ export default function Turtle({ spawnProgress, wanderEnabled }: CreatureProps) 
   if (s <= 0.001) return null
 
   return (
-    <group ref={root} scale={s}>
+    <group ref={root} position={[CREATURE_DROP_X, CREATURE_BASE_Y, CREATURE_DROP_Z]} scale={s}>
       {/* Lower body — flat cylinder */}
       <mesh castShadow position={[0, 0.07, 0]}>
         <cylinderGeometry args={[0.21, 0.23, 0.08, 18]} />

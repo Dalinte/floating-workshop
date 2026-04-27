@@ -2,15 +2,19 @@ import { useEffect, useRef, useState } from 'react'
 import { useStore, PHASES } from '../store.ts'
 import UFO from './UFO.tsx'
 import Beam from './Beam.tsx'
-import { creatureWorldPos } from '../lib/creatureTracker.ts'
+import {
+  creatureWorldPos,
+  CREATURE_DROP_X,
+  CREATURE_DROP_Z,
+} from '../lib/creatureTracker.ts'
 
 type Vec3 = [number, number, number]
 
 const UFO_OFFSCREEN: Vec3 = [20, 15, -10]
 const UFO_OVER_ISLAND: Vec3 = [0, 4.5, 0]
-const UFO_OVER_DELIVERY_DROP: Vec3 = [3, 4.5, 1]
-const ISLAND_TOP_Y = 1.4
 const UFO_HOVER_Y = 4.5
+const UFO_OVER_DELIVERY_DROP: Vec3 = [CREATURE_DROP_X, UFO_HOVER_Y, CREATURE_DROP_Z]
+const ISLAND_TOP_Y = 1.4
 
 interface AbortRef {
   current: boolean
@@ -218,11 +222,10 @@ export default function DeliverySequence() {
       await tween(1, 0, 500, setBeamIntensity, abort)
       if (abort.current) return
 
-      // 3) UFO retreats, then we land in INTERACTIVE.
+      // 3) Hand control back immediately — UFO continues flying offscreen
+      //    in the background while the user is free to click again.
       setActiveDelivery(null)
       setUfoTarget(UFO_OFFSCREEN)
-      await awaitArrival(arrivedHandlerRef, abort)
-      if (abort.current) return
       setPhase(PHASES.INTERACTIVE)
     })()
     return () => {

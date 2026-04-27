@@ -32,7 +32,7 @@ export default function Beam({ visible, intensity = 0, position, targetY = 1.2 }
         <meshBasicMaterial
           color="#b3e5ff"
           transparent
-          opacity={Math.min(1, intensity) * 0.45}
+          opacity={Math.min(1, intensity) * 0.22}
           side={THREE.DoubleSide}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
@@ -42,9 +42,9 @@ export default function Beam({ visible, intensity = 0, position, targetY = 1.2 }
       <mesh position={[position[0], midY, position[2]]}>
         <coneGeometry args={[0.7, length, 20, 1, true]} />
         <meshBasicMaterial
-          color="#ffffff"
+          color="#cfeeff"
           transparent
-          opacity={Math.min(1, intensity) * 0.35}
+          opacity={Math.min(1, intensity) * 0.16}
           side={THREE.DoubleSide}
           blending={THREE.AdditiveBlending}
           depthWrite={false}
@@ -53,9 +53,9 @@ export default function Beam({ visible, intensity = 0, position, targetY = 1.2 }
       </mesh>
       <pointLight
         position={[position[0], targetY + 0.1, position[2]]}
-        intensity={intensity * 5}
+        intensity={intensity * 1.8}
         color="#b3e5ff"
-        distance={4}
+        distance={3}
       />
     </group>
   )

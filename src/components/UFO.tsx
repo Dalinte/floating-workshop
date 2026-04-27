@@ -1,6 +1,7 @@
 import { useRef, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { ufoWorldPos } from '../lib/ufoTracker.ts'
 
 const LIGHT_COUNT = 8
 
@@ -38,6 +39,9 @@ export default function UFO({ targetPosition, onArrived, speed = 0.04 }: UFOProp
       corpus.current.rotation.y += delta * 0.6
     }
 
+    // Publish position for UfoShadow.
+    ufoWorldPos.copy(root.current.position)
+
     const dist = root.current.position.distanceTo(targetVec)
     if (dist > 0.5) arrivedRef.current = false
     if (!arrivedRef.current && dist < 0.08) {
@@ -56,7 +60,9 @@ export default function UFO({ targetPosition, onArrived, speed = 0.04 }: UFOProp
   return (
     <group ref={root}>
       <group ref={corpus}>
-        <mesh castShadow>
+        {/* No castShadow on UFO meshes — we draw a separate vertical "blob"
+            shadow under the craft (see UfoShadow). */}
+        <mesh>
           <cylinderGeometry args={[1.4, 1.0, 0.3, 32]} />
           <meshStandardMaterial color="#c0c5d0" metalness={0.9} roughness={0.2} />
         </mesh>

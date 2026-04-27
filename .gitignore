@@ -31,3 +31,7 @@ pnpm-debug.log*
 
 # docs
 docs
+
+# worktrees
+.claude/worktrees
+

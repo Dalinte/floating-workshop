@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import * as THREE from 'three'
 import { useWander } from '../../lib/useWander.ts'
+import { CREATURE_BASE_Y, CREATURE_DROP_X, CREATURE_DROP_Z } from '../../lib/creatureTracker.ts'
 
 interface CreatureProps {
   spawnProgress: number
@@ -20,7 +21,7 @@ export default function Rabbit({ spawnProgress, wanderEnabled }: CreatureProps) 
   if (s <= 0.001) return null
 
   return (
-    <group ref={root} scale={s}>
+    <group ref={root} position={[CREATURE_DROP_X, CREATURE_BASE_Y, CREATURE_DROP_Z]} scale={s}>
       {/* Body */}
       <mesh castShadow position={[0, 0.18, 0]}>
         <sphereGeometry args={[0.18, 16, 12]} />

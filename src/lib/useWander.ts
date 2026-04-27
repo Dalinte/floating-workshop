@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { creatureWorldPos } from './creatureTracker.ts'
+import { CREATURE_BASE_Y, creatureWorldPos } from './creatureTracker.ts'
 
 interface UseWanderOptions {
   enabled: boolean
@@ -31,7 +31,7 @@ export function useWander(
     enabled,
     speed = 0.7,
     radius = 2,
-    baseY = 0.4,
+    baseY = CREATURE_BASE_Y,
     hopHeight = 0.05,
     hopFrequency = 6,
   }: UseWanderOptions,
