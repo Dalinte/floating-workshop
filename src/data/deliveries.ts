@@ -1,7 +1,5 @@
 import type { DeliveryId } from '../store.ts'
 
-export type CargoType = 'capsule' | 'crate' | 'envelope'
-
 export interface ProjectItem {
   name: string
   desc: string
@@ -12,8 +10,6 @@ export interface Delivery {
   id: DeliveryId
   title: string
   body: string
-  cargo: CargoType
-  cargoColor: string
   items?: ProjectItem[]
   email?: string
 }
@@ -23,8 +19,6 @@ export const deliveries: Record<DeliveryId, Delivery> = {
     id: 'about',
     title: 'About Me',
     body: 'Independent developer crafting interactive web experiences. I love the spot where engineering meets play — shaders, small simulations, tools that feel like toys. Currently building things from a floating workshop in the sky.',
-    cargo: 'capsule',
-    cargoColor: '#7dd3fc',
   },
   projects: {
     id: 'projects',
@@ -47,16 +41,12 @@ export const deliveries: Record<DeliveryId, Delivery> = {
         link: '#',
       },
     ],
-    cargo: 'crate',
-    cargoColor: '#fbbf24',
   },
   contact: {
     id: 'contact',
     title: 'Contact',
     body: 'The fastest way to reach me is email. I usually respond within a day or two — open to freelance, collaborations, and interesting conversations.',
     email: 'hello@example.com',
-    cargo: 'envelope',
-    cargoColor: '#fb7185',
   },
 }
 

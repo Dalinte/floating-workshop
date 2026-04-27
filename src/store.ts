@@ -51,9 +51,17 @@ export const useStore = create<StoreState>((set, get) => ({
   setActiveDelivery: (id) => set({ activeDelivery: id }),
 
   requestDelivery: (id) => {
-    const { phase } = get()
-    if (phase !== PHASES.INTERACTIVE) return
-    set({ activeDelivery: id, phase: PHASES.DELIVERY_ARRIVING })
+    const { phase, characterSpawn } = get()
+    const introReady = characterSpawn >= 0.99
+    if (phase !== PHASES.INTERACTIVE && !introReady) return
+    // If clicked during the intro tail (post-spawn beam-out / UFO leave),
+    // mark intro complete and zero the beam so the delivery beam-in starts clean.
+    set({
+      activeDelivery: id,
+      phase: PHASES.DELIVERY_ARRIVING,
+      introCompleted: true,
+      beamIntensity: 0,
+    })
   },
 
   closeDelivery: () => {

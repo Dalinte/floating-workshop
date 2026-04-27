@@ -10,9 +10,12 @@ const introPhases = new Set<Phase>([
 export default function SkipIntro() {
   const phase = useStore((s) => s.phase)
   const introCompleted = useStore((s) => s.introCompleted)
+  const characterSpawn = useStore((s) => s.characterSpawn)
   const skipIntro = useStore((s) => s.skipIntro)
 
-  if (introCompleted || !introPhases.has(phase)) return null
+  // Hide as soon as the programmer has fully spawned — the user shouldn't
+  // need to wait for the beam-out / UFO leave to be considered "done".
+  if (introCompleted || characterSpawn >= 0.99 || !introPhases.has(phase)) return null
 
   return (
     <button

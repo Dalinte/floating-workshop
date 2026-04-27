@@ -1,7 +1,7 @@
 import { useRef, type ReactNode } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { ISLAND_BASE_Y, islandWobbleRotX, islandWobbleRotZ, islandWobbleY } from '../lib/wobble.ts'
+import { ISLAND_BASE_Y, islandWobbleY } from '../lib/wobble.ts'
 
 interface IslandProps {
   children?: ReactNode
@@ -12,10 +12,7 @@ export default function Island({ children }: IslandProps) {
 
   useFrame((state) => {
     if (!ref.current) return
-    const t = state.clock.elapsedTime
-    ref.current.position.y = ISLAND_BASE_Y + islandWobbleY(t)
-    ref.current.rotation.z = islandWobbleRotZ(t)
-    ref.current.rotation.x = islandWobbleRotX(t)
+    ref.current.position.y = ISLAND_BASE_Y + islandWobbleY(state.clock.elapsedTime)
   })
 
   return (

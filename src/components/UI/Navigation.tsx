@@ -4,9 +4,16 @@ import { deliveryList } from '../../data/deliveries.ts'
 export default function Navigation() {
   const phase = useStore((s) => s.phase)
   const activeDelivery = useStore((s) => s.activeDelivery)
+  const characterSpawn = useStore((s) => s.characterSpawn)
   const requestDelivery = useStore((s) => s.requestDelivery)
 
-  const enabled = phase === PHASES.INTERACTIVE
+  const inDelivery =
+    phase === PHASES.DELIVERY_ARRIVING ||
+    phase === PHASES.DELIVERY_DROPPING ||
+    phase === PHASES.DELIVERY_ACTIVE ||
+    phase === PHASES.DELIVERY_LEAVING
+
+  const enabled = !inDelivery && characterSpawn >= 0.99
 
   return (
     <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">

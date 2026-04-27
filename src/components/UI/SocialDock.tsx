@@ -5,9 +5,9 @@ interface SocialItem {
 }
 
 const items: SocialItem[] = [
-  { label: 'GitHub', href: 'https://github.com', glyph: '⌘' },
-  { label: 'LinkedIn', href: 'https://linkedin.com', glyph: 'in' },
-  { label: 'Email', href: 'mailto:hello@example.com', glyph: '✉' },
+  { label: 'GitHub', href: import.meta.env.VITE_SOCIAL_GITHUB_URL, glyph: '⌘' },
+  { label: 'LinkedIn', href: import.meta.env.VITE_SOCIAL_LINKEDIN_URL, glyph: 'in' },
+  { label: 'Email', href: `mailto:${import.meta.env.VITE_SOCIAL_EMAIL}`, glyph: '✉' },
 ]
 
 export default function SocialDock() {
