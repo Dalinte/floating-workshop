@@ -6,6 +6,7 @@ import Sky from './Sky.tsx'
 import Lights from './Lights.tsx'
 import Island from './Island.tsx'
 import Character from './Character.tsx'
+import Creatures from './creatures/Creatures.tsx'
 import DeliverySequence from './DeliverySequence.tsx'
 import CameraController from './CameraController.tsx'
 
@@ -30,6 +31,7 @@ export default function Scene() {
 
         <Island>
           <CharacterFromStore />
+          <Creatures />
         </Island>
 
         <DeliverySequence />
