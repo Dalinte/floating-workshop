@@ -50,7 +50,7 @@ export default function Island({ children }: IslandProps) {
         <meshStandardMaterial color="#a89c8e" flatShading roughness={1} />
       </mesh>
       {/* Tree */}
-      <group position={[-1.9, 0.4, 1.4]}>
+      <group position={[-1.9, 0, 1.4]}>
         <mesh castShadow position={[0, 0.4, 0]}>
           <cylinderGeometry args={[0.1, 0.13, 0.8, 8]} />
           <meshStandardMaterial color="#5a3a26" roughness={1} flatShading />
@@ -65,7 +65,7 @@ export default function Island({ children }: IslandProps) {
         </mesh>
       </group>
       {/* Small bush */}
-      <group position={[2.0, 0.4, -1.5]}>
+      <group position={[2.0, 0.1, -1.5]}>
         <mesh castShadow position={[0, 0.25, 0]}>
           <icosahedronGeometry args={[0.35, 0]} />
           <meshStandardMaterial color="#3d8a4f" roughness={1} flatShading />
