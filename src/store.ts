@@ -23,11 +23,13 @@ export interface StoreState {
   characterVisible: boolean
   characterSpawn: number
   beamIntensity: number
+  creatureSpawn: number
 
   setPhase: (phase: Phase) => void
   setCharacterVisible: (visible: boolean) => void
   setCharacterSpawn: (v: number) => void
   setBeamIntensity: (v: number) => void
+  setCreatureSpawn: (v: number) => void
   setActiveDelivery: (id: DeliveryId | null) => void
 
   requestDelivery: (id: DeliveryId) => void
@@ -43,11 +45,13 @@ export const useStore = create<StoreState>((set, get) => ({
   characterVisible: false,
   characterSpawn: 0,
   beamIntensity: 0,
+  creatureSpawn: 0,
 
   setPhase: (phase) => set({ phase }),
   setCharacterVisible: (visible) => set({ characterVisible: visible }),
   setCharacterSpawn: (v) => set({ characterSpawn: v }),
   setBeamIntensity: (v) => set({ beamIntensity: v }),
+  setCreatureSpawn: (v) => set({ creatureSpawn: v }),
   setActiveDelivery: (id) => set({ activeDelivery: id }),
 
   requestDelivery: (id) => {
@@ -77,6 +81,7 @@ export const useStore = create<StoreState>((set, get) => ({
       characterVisible: true,
       characterSpawn: 1,
       beamIntensity: 0,
+      creatureSpawn: 0,
       activeDelivery: null,
     })
   },
