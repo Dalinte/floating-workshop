@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useStore, PHASES, type Phase } from '../../store.ts'
 
 const introPhases = new Set<Phase>([
@@ -8,6 +9,7 @@ const introPhases = new Set<Phase>([
 ])
 
 export default function SkipIntro() {
+  const { t } = useTranslation()
   const phase = useStore((s) => s.phase)
   const introCompleted = useStore((s) => s.introCompleted)
   const characterSpawn = useStore((s) => s.characterSpawn)
@@ -22,7 +24,7 @@ export default function SkipIntro() {
       onClick={skipIntro}
       className="fixed top-6 right-6 z-10 glass rounded-full px-4 py-2 text-sm text-white/85 hover:bg-white/15 transition"
     >
-      Skip intro →
+      {t('intro.skip')}
     </button>
   )
 }

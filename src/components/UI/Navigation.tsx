@@ -1,7 +1,9 @@
+import { useTranslation } from 'react-i18next'
 import { useStore, PHASES } from '../../store.ts'
 import { deliveryList } from '../../data/deliveries.ts'
 
 export default function Navigation() {
+  const { t } = useTranslation()
   const phase = useStore((s) => s.phase)
   const activeDelivery = useStore((s) => s.activeDelivery)
   const characterSpawn = useStore((s) => s.characterSpawn)
@@ -36,7 +38,7 @@ export default function Navigation() {
               disabled={!enabled}
               className={classes}
             >
-              {d.title}
+              {t(`deliveries.${d.id}.title`)}
             </button>
           )
         })}
