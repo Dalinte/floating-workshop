@@ -10,11 +10,12 @@ type Supported = (typeof SUPPORTED)[number]
 const isSupported = (value: string): value is Supported =>
   (SUPPORTED as readonly string[]).includes(value)
 
-// Custom path detector: only returns a language when the first path segment
-// is exactly `ru` or `en`. For `/fr/...`, `/about`, or `/`, it returns
-// `undefined` so the detector chain falls through to `navigator`.
-const pathDetector = {
-  name: 'path',
+// Returns the first path segment only when it is exactly `ru` or `en`.
+// Named `supportedPath` (not `path`) to avoid name collision with the
+// built-in `path` detector, which i18next-browser-languagedetector
+// re-registers on every `init()` call and would overwrite ours.
+const supportedPathDetector = {
+  name: 'supportedPath',
   lookup(): string | undefined {
     if (typeof window === 'undefined') return undefined
     const segment = window.location.pathname.split('/')[1]?.toLowerCase()
@@ -23,7 +24,7 @@ const pathDetector = {
 }
 
 const detector = new LanguageDetector()
-detector.addDetector(pathDetector)
+detector.addDetector(supportedPathDetector)
 
 i18n
   .use(detector)
@@ -37,8 +38,7 @@ i18n
     supportedLngs: ['en', 'ru'],
     nonExplicitSupportedLngs: true,
     detection: {
-      order: ['path', 'navigator'],
-      lookupFromPathIndex: 0,
+      order: ['supportedPath', 'navigator'],
       caches: [],
     },
     interpolation: {
@@ -47,6 +47,9 @@ i18n
   })
   .then(() => {
     document.documentElement.lang = i18n.resolvedLanguage ?? i18n.language
+  })
+  .catch((err) => {
+    console.error('i18n init failed', err)
   })
 
 i18n.on('languageChanged', (lng) => {
