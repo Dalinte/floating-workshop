@@ -50,22 +50,18 @@ export default function DeliveryPanel() {
             {t(`deliveries.${activeDelivery}.body`)}
           </p>
 
-          {items && meta.itemLinks && (
+          {items && (
             <ul className="space-y-3 mt-4">
-              {items.map((item, i) => (
+              {items.map((item) => (
+                // Project links intentionally not wired up yet — restore the
+                // <a href={meta.itemLinks![i]}> wrapper around this <div> when
+                // real URLs land in deliveries.projects.itemLinks.
                 <li
                   key={item.name}
-                  className="rounded-xl border border-white/15 bg-white/5 p-4 hover:bg-white/10 transition"
+                  className="rounded-xl border border-white/15 bg-white/5 p-4"
                 >
-                  <a
-                    href={meta.itemLinks![i]}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block"
-                  >
-                    <div className="text-white font-medium mb-1">{item.name} →</div>
-                    <div className="text-white/70 text-xs">{item.desc}</div>
-                  </a>
+                  <div className="text-white font-medium mb-1">{item.name}</div>
+                  <div className="text-white/70 text-xs">{item.desc}</div>
                 </li>
               ))}
             </ul>

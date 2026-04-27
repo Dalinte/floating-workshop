@@ -22,7 +22,7 @@ export default function SkipIntro() {
   return (
     <button
       onClick={skipIntro}
-      className="fixed top-6 right-6 z-10 glass rounded-full px-4 py-2 text-sm text-white/85 hover:bg-white/15 transition"
+      className="fixed top-4 right-4 sm:top-6 sm:right-6 z-10 glass rounded-full px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm text-white/85 hover:bg-white/15 transition"
     >
       {t('intro.skip')}
     </button>
