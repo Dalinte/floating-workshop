@@ -14,10 +14,19 @@ export default function Navigation() {
   // instantly; whether the UFO also flies in to deliver is decided in the
   // store (only when the UFO is idle).
   const enabled = characterSpawn >= 0.99
+  // Slide the dock up from below the viewport once the UFO starts spawning
+  // the character on its first arrival.
+  const revealed = characterSpawn > 0
 
   return (
     <nav className="fixed bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-10">
-      <div className="glass rounded-full px-1.5 py-1.5 sm:px-2 sm:py-2 flex gap-1 sm:gap-2 shadow-lg">
+      <div
+        className={[
+          'glass rounded-full px-1.5 py-1.5 sm:px-2 sm:py-2 flex gap-1 sm:gap-2 shadow-lg',
+          'transition-all duration-700 ease-out',
+          revealed ? 'translate-y-0 opacity-100' : 'translate-y-[150%] opacity-0 pointer-events-none',
+        ].join(' ')}
+      >
         {deliveryList.map((d) => {
           const isActive = panelOpen && panelDelivery === d.id
           const classes = [
