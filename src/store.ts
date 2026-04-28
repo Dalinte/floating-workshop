@@ -154,6 +154,11 @@ export const useStore = create<StoreState>((set, get) => ({
       phase: PHASES.CLEANUP_ARRIVING,
       beamIntensity: 0,
       cleanupProgress: 0,
+      // The right-side info panel describes a creature that's about to be
+      // taken away — close it so the user isn't reading stale content while
+      // the cleanup runs.
+      panelOpen: false,
+      activeDelivery: null,
     })
   },
 
