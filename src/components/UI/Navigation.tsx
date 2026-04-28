@@ -13,8 +13,11 @@ export default function Navigation() {
   // Menu state is independent of the UFO. Buttons are clickable as soon as
   // the character has spawned — clicks always switch the panel/active button
   // instantly; whether the UFO also flies in to deliver is decided in the
-  // store (only when the UFO is idle).
-  const enabled = characterSpawn >= 0.99
+  // store (only when the UFO is idle). Exception: during cleanup the UFO is
+  // busy sucking up creatures, so block menu input until it finishes.
+  const isCleaningUp =
+    phase === PHASES.CLEANUP_ARRIVING || phase === PHASES.CLEANUP_DROPPING
+  const enabled = characterSpawn >= 0.99 && !isCleaningUp
   // Slide the dock up from below once the intro UFO starts leaving, i.e.
   // the character has been delivered and the craft is heading offscreen.
   // Stays revealed for every phase after that.
