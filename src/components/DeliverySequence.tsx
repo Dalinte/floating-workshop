@@ -71,7 +71,6 @@ export default function DeliverySequence() {
   const setCleanupProgress = useStore((s) => s.setCleanupProgress)
   const commitSpawningCreature = useStore((s) => s.commitSpawningCreature)
   const clearSpawnedCreatures = useStore((s) => s.clearSpawnedCreatures)
-  const setPanel = useStore((s) => s.setPanel)
   const finishIntro = useStore((s) => s.finishIntro)
 
   const [ufoTarget, setUfoTarget] = useState<Vec3>(UFO_OFFSCREEN)
@@ -168,18 +167,18 @@ export default function DeliverySequence() {
       await tween(1, 0, 500, setBeamIntensity, abort)
       if (abort.current) return
 
-      // Move the in-flight creature to the permanent list, open the panel,
-      // hand control back. UFO drifts offscreen on its own.
+      // Move the in-flight creature to the permanent list and hand control
+      // back. The panel is opened up-front by `requestDelivery` so menu
+      // interactions stay instant; nothing to do here. UFO drifts offscreen
+      // on its own.
       commitSpawningCreature()
-      const id = useStore.getState().activeDelivery
-      if (id) setPanel(true, id)
       setUfoTarget(UFO_OFFSCREEN)
       setPhase(PHASES.INTERACTIVE)
     })()
     return () => {
       abort.current = true
     }
-  }, [phase, setBeamIntensity, setCreatureSpawn, commitSpawningCreature, setPanel, setPhase])
+  }, [phase, setBeamIntensity, setCreatureSpawn, commitSpawningCreature, setPhase])
 
   // ─── Cleanup flow (UFO sucks every creature up at once) ────────────────
 

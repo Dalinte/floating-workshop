@@ -109,7 +109,19 @@ export const useStore = create<StoreState>((set, get) => ({
   requestDelivery: (id) => {
     const { phase, characterSpawn, nextCreatureId } = get()
     const introReady = characterSpawn >= 0.99
-    if (phase !== PHASES.INTERACTIVE && !introReady) return
+    if (!introReady) return
+
+    // Panel state is decoupled from the UFO flight — open + switch content
+    // immediately so the active button highlight and right-side info update
+    // on the same frame as the click. The UFO sequence (if any) plays out
+    // in the background.
+    set({ panelOpen: true, panelDelivery: id })
+
+    // Only kick off a new UFO delivery if the UFO is currently idle. If it's
+    // already arriving/dropping/cleaning up, let it finish its current job —
+    // the user can request another delivery once it lands.
+    if (phase !== PHASES.INTERACTIVE) return
+
     set({
       activeDelivery: id,
       phase: PHASES.DELIVERY_ARRIVING,

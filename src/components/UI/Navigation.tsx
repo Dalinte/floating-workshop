@@ -1,25 +1,19 @@
 import { useTranslation } from 'react-i18next'
-import { useStore, PHASES } from '../../store.ts'
+import { useStore } from '../../store.ts'
 import { deliveryList } from '../../data/deliveries.ts'
 
 export default function Navigation() {
   const { t } = useTranslation()
-  const phase = useStore((s) => s.phase)
   const panelOpen = useStore((s) => s.panelOpen)
   const panelDelivery = useStore((s) => s.panelDelivery)
   const characterSpawn = useStore((s) => s.characterSpawn)
   const requestDelivery = useStore((s) => s.requestDelivery)
 
-  // Buttons are disabled only while the UFO is busy (delivering or cleaning up).
-  // The post-spawn intro tail (UFO still flying off, camera dollying in) does
-  // NOT lock them — `requestDelivery` accepts clicks once the character is fully
-  // spawned, regardless of which intro phase the UFO is still finishing.
-  const isUfoBusy =
-    phase === PHASES.DELIVERY_ARRIVING ||
-    phase === PHASES.DELIVERY_DROPPING ||
-    phase === PHASES.CLEANUP_ARRIVING ||
-    phase === PHASES.CLEANUP_DROPPING
-  const enabled = !isUfoBusy && characterSpawn >= 0.99
+  // Menu state is independent of the UFO. Buttons are clickable as soon as
+  // the character has spawned — clicks always switch the panel/active button
+  // instantly; whether the UFO also flies in to deliver is decided in the
+  // store (only when the UFO is idle).
+  const enabled = characterSpawn >= 0.99
 
   return (
     <nav className="fixed bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-10">
@@ -27,7 +21,7 @@ export default function Navigation() {
         {deliveryList.map((d) => {
           const isActive = panelOpen && panelDelivery === d.id
           const classes = [
-            'whitespace-nowrap px-3 py-1.5 sm:px-5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-all border',
+            'whitespace-nowrap px-3 py-1.5 sm:px-5 sm:py-2 rounded-full font-medium transition-all border',
             isActive
               ? 'bg-white text-slate-900 border-white shadow'
               : 'border-white/20 text-white/90 hover:bg-white/10',
