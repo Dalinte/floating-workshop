@@ -1,13 +1,16 @@
 import { useTranslation } from 'react-i18next'
 import { socialLinks } from '../../lib/socialLinks.ts'
-import { useStore } from '../../store.ts'
+import { useStore, PHASES } from '../../store.ts'
 
 export default function SocialDock() {
   const { t } = useTranslation()
-  const characterSpawn = useStore((s) => s.characterSpawn)
-  // Slide up from below in sync with the bottom navigation, once the UFO
-  // starts spawning the character on its first arrival.
-  const revealed = characterSpawn > 0
+  const phase = useStore((s) => s.phase)
+  // Slide up in sync with the bottom navigation: once the intro UFO has
+  // dropped the character and is heading offscreen.
+  const revealed =
+    phase !== PHASES.IDLE &&
+    phase !== PHASES.INTRO_ARRIVING &&
+    phase !== PHASES.INTRO_DROPPING
 
   return (
     <div

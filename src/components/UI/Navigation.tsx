@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { useStore } from '../../store.ts'
+import { useStore, PHASES } from '../../store.ts'
 import { deliveryList } from '../../data/deliveries.ts'
 
 export default function Navigation() {
@@ -7,6 +7,7 @@ export default function Navigation() {
   const panelOpen = useStore((s) => s.panelOpen)
   const panelDelivery = useStore((s) => s.panelDelivery)
   const characterSpawn = useStore((s) => s.characterSpawn)
+  const phase = useStore((s) => s.phase)
   const requestDelivery = useStore((s) => s.requestDelivery)
 
   // Menu state is independent of the UFO. Buttons are clickable as soon as
@@ -14,9 +15,13 @@ export default function Navigation() {
   // instantly; whether the UFO also flies in to deliver is decided in the
   // store (only when the UFO is idle).
   const enabled = characterSpawn >= 0.99
-  // Slide the dock up from below the viewport once the UFO starts spawning
-  // the character on its first arrival.
-  const revealed = characterSpawn > 0
+  // Slide the dock up from below once the intro UFO starts leaving, i.e.
+  // the character has been delivered and the craft is heading offscreen.
+  // Stays revealed for every phase after that.
+  const revealed =
+    phase !== PHASES.IDLE &&
+    phase !== PHASES.INTRO_ARRIVING &&
+    phase !== PHASES.INTRO_DROPPING
 
   return (
     <nav className="fixed bottom-5 sm:bottom-8 left-1/2 -translate-x-1/2 z-10">

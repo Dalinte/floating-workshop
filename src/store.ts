@@ -117,15 +117,27 @@ export const useStore = create<StoreState>((set, get) => ({
     // in the background.
     set({ panelOpen: true, panelDelivery: id })
 
-    // Only kick off a new UFO delivery if the UFO is currently idle. If it's
-    // already arriving/dropping/cleaning up, let it finish its current job —
-    // the user can request another delivery once it lands.
-    if (phase !== PHASES.INTERACTIVE) return
+    // Block only when the UFO is actively in the middle of a delivery /
+    // cleanup job. Late-intro phases (UFO drifting offscreen after the
+    // character is fully spawned, or the trailing beam fade-out) can be
+    // interrupted — the character is already on the island, so the
+    // intro is done as far as the user is concerned.
+    const ufoBusy =
+      phase === PHASES.DELIVERY_ARRIVING ||
+      phase === PHASES.DELIVERY_DROPPING ||
+      phase === PHASES.CLEANUP_ARRIVING ||
+      phase === PHASES.CLEANUP_DROPPING
+    if (ufoBusy) return
 
     set({
       activeDelivery: id,
       phase: PHASES.DELIVERY_ARRIVING,
       introCompleted: true,
+      // If we're interrupting the tail of INTRO_DROPPING, the character spawn
+      // tween may have aborted at ~0.99 — snap to 1 so the model is at full
+      // scale.
+      characterVisible: true,
+      characterSpawn: 1,
       beamIntensity: 0,
       creatureSpawn: 0,
       // Create the in-flight creature now so its component mounts before
